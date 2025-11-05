@@ -45,7 +45,13 @@ Il demo rileva automaticamente:
 - **Commerce**: Prodotti generici (iPhone, abbigliamento, ecc.)
 - **Real Estate**: Immobili (case, appartamenti con GPS)
 
-## 📞 Link Utili
+## � Problemi Permessi?
+
+Se ricevi errori tipo "Unsupported post request" o "missing permissions":
+
+**➡️ Leggi [META_BUSINESS_SETUP.md](META_BUSINESS_SETUP.md)** per la configurazione completa di Meta Business Manager con Commerce API e risoluzione problemi di autorizzazione.
+
+## �📞 Link Utili
 
 - **Meta Commerce Manager**: https://business.facebook.com/commerce/
 - **Meta for Developers**: https://developers.facebook.com/

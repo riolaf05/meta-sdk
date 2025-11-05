@@ -305,6 +305,18 @@ Se tutto è configurato correttamente, dovresti vedere:
 
 La demo rileva automaticamente il tipo di catalogo (commerce o real estate) e aggiunge i prodotti appropriati.
 
+### 🔧 Risoluzione Problemi Permessi
+
+Se ricevi errori di permessi o "Object does not exist", consulta la guida completa:
+
+**📖 [META_BUSINESS_SETUP.md](META_BUSINESS_SETUP.md)** - Configurazione step-by-step di Meta Business Manager e risoluzione problemi
+
+Questa guida copre:
+- ✅ Creazione corretta dell'app Facebook con Commerce API
+- ✅ Configurazione Business Portfolio e System User  
+- ✅ Generazione di access token permanenti
+- ✅ Risoluzione di tutti gli errori comuni di autorizzazione
+
 ### Esempio di Output
 ```
 🚀 WhatsApp Business Catalog Demo

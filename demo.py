@@ -23,43 +23,71 @@ def detect_catalog_type():
         
         config = Config()
         
+        print("🔍 Rilevamento Tipo Catalogo")
+        print("=" * 28)
+        
         if not config.META_ACCESS_TOKEN or not config.CATALOG_ID:
+            print("❌ Configurazione incompleta")
             return None, "Configurazione incompleta"
         
         # Ottieni informazioni sul catalogo
         url = f"{config.META_BASE_URL}/{config.CATALOG_ID}"
         headers = {'Authorization': f'Bearer {config.META_ACCESS_TOKEN}'}
-        params = {'fields': 'vertical'}
+        params = {'fields': 'name,vertical,id'}
         
         response = requests.get(url, headers=headers, params=params)
         
         if response.status_code == 200:
             data = response.json()
             vertical = data.get('vertical', 'commerce')
-            return vertical, None
+            name = data.get('name', 'N/A')
+            catalog_id = data.get('id', 'N/A')
+            
+            print(f"📊 Nome Catalogo: {name}")
+            print(f"🆔 ID Catalogo: {catalog_id}")
+            print(f"🏷️ Vertical: {vertical or 'None (default commerce)'}")
+            
+            if vertical == 'home_listings':
+                print(f"🏠 Tipo Rilevato: Real Estate (home_listings)")
+            else:
+                print(f"🛒 Tipo Rilevato: Commerce (products)")
+                if not vertical:
+                    print(f"💡 Nota: Catalogo non ha vertical specifico, usando commerce")
+            
+            return vertical or 'commerce', None
         else:
+            print(f"❌ Errore API: {response.status_code}")
             return None, f"Errore API: {response.status_code}"
             
     except Exception as e:
+        print(f"❌ Errore: {str(e)}")
         return None, str(e)
 
 def add_commerce_products():
     """Aggiunge prodotti per cataloghi commerce standard."""
     
     try:
-        from src.whatsapp_catalog_manager import WhatsAppCatalogManager
+        from src.config import Config
+        import requests
         
-        manager = WhatsAppCatalogManager()
+        config = Config()
         
         print("📦 Aggiunta Prodotti Commerce al Catalogo")
         print("=" * 42)
+        
+        # URL endpoint per prodotti commerce
+        url = f"{config.META_BASE_URL}/{config.CATALOG_ID}/products"
+        headers = {
+            'Authorization': f'Bearer {config.META_ACCESS_TOKEN}',
+            'Content-Type': 'application/json'
+        }
         
         products = [
             {
                 "retailer_id": "IPHONE_15_PRO",
                 "name": "iPhone 15 Pro 256GB",
                 "description": "Ultimo iPhone con chip A17 Pro, fotocamera da 48MP e display Super Retina XDR da 6.1 pollici.",
-                "price": "139900", # €1399.00 in centesimi
+                "price": 139900, # €1399.00 in centesimi (integer)
                 "currency": "EUR",
                 "availability": "in stock",
                 "condition": "new",
@@ -72,7 +100,7 @@ def add_commerce_products():
                 "retailer_id": "TSHIRT_001",
                 "name": "T-Shirt Premium Cotton",
                 "description": "T-shirt di alta qualità in 100% cotone biologico. Disponibile in vari colori e taglie.",
-                "price": "2999", # €29.99 in centesimi
+                "price": 2999, # €29.99 in centesimi (integer)
                 "currency": "EUR", 
                 "availability": "in stock",
                 "condition": "new",
@@ -89,14 +117,17 @@ def add_commerce_products():
             print(f"📦 Aggiungendo prodotto {i}/{len(products)}: {product['name']}")
             
             try:
-                result = manager.add_product(product)
+                response = requests.post(url, headers=headers, json=product)
                 
-                if result.get('success'):
+                if response.status_code == 200:
+                    result = response.json()
                     print(f"   ✅ Aggiunto con successo!")
-                    print(f"   🆔 Product ID: {result.get('product_id', 'N/A')}")
+                    print(f"   🆔 Product ID: {result.get('id', 'N/A')}")
                     success_count += 1
                 else:
-                    print(f"   ❌ Errore: {result.get('error', 'Errore sconosciuto')}")
+                    error_data = response.json()
+                    error_msg = error_data.get('error', {}).get('message', 'Errore sconosciuto')
+                    print(f"   ❌ Errore: {error_msg}")
                     
             except Exception as e:
                 print(f"   ❌ Errore: {e}")
@@ -134,39 +165,37 @@ def add_real_estate_listings():
                 "home_listing_id": "VILLA_ROMA_001",
                 "name": "Villa di Lusso a Roma Nord",
                 "description": "Splendida villa di 400mq con giardino di 1000mq, 5 camere da letto, 4 bagni, garage per 3 auto.",
-                "price": "950000",
+                "price": 950000,  # Integer, non string
                 "currency": "EUR",
                 "url": "https://www.example-realestate.com/villa-roma-001",
                 "images": [
-                    {"image_url": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800"}
+                    {"image_url": "https://picsum.photos/800/600?random=1"}
                 ],
                 "address": {
                     "street_address": "Via dei Parioli, 25",
                     "city": "Roma",
-                    "region": "Lazio",
+                    "region": "Lazio", 
                     "country": "IT",
                     "postal_code": "00135",
                     "latitude": 41.9028,
                     "longitude": 12.4964
                 },
                 "availability": "for_sale",
-                "listing_type": "for_sale", 
-                "property_type": "house",
                 "year_built": 2018
             },
             {
                 "home_listing_id": "APT_MILANO_002",
                 "name": "Appartamento Moderno Milano Centro",
                 "description": "Appartamento di 120mq completamente ristrutturato nel centro di Milano. 3 camere, 2 bagni, cucina moderna.",
-                "price": "750000",
+                "price": 750000,  # Integer, non string
                 "currency": "EUR",
                 "url": "https://www.example-realestate.com/apt-milano-002",
                 "images": [
-                    {"image_url": "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800"}
+                    {"image_url": "https://picsum.photos/800/600?random=2"}
                 ],
                 "address": {
                     "street_address": "Via Montenapoleone, 12",
-                    "city": "Milano",
+                    "city": "Milano", 
                     "region": "Lombardia",
                     "country": "IT",
                     "postal_code": "20121",
@@ -174,8 +203,6 @@ def add_real_estate_listings():
                     "longitude": 9.1900
                 },
                 "availability": "for_sale",
-                "listing_type": "for_sale",
-                "property_type": "apartment", 
                 "year_built": 2020
             }
         ]
@@ -288,6 +315,12 @@ def main():
     else:
         print()
         print("⚠️  Demo completata con alcuni errori. Controlla la configurazione.")
+        print()
+        print("🔍 Per debug avanzato:")
+        print("   python debug_permissions.py")
+        print()
+        print("📖 Per configurazione app:")
+        print("   Leggi META_BUSINESS_SETUP.md")
 
 if __name__ == "__main__":
     main()
