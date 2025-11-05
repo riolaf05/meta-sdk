@@ -1,0 +1,44 @@
+# Core dependencies
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Meta/Facebook SDK
+facebook-sdk>=3.1.0
+
+# Azure Communication Services (per WhatsApp messaging)
+azure-communication-messages>=1.2.0b1
+
+# Data handling
+pandas>=2.0.0
+openpyxl>=3.1.0
+
+# JSON and CSV processing
+jsonschema>=4.17.0
+
+# HTTP client with better error handling
+httpx>=0.24.0
+
+# Logging and monitoring
+structlog>=23.1.0
+
+# Date and time handling
+python-dateutil>=2.8.2
+
+# Validation
+pydantic>=2.0.0
+
+# CLI interface (optional)
+click>=8.1.0
+
+# Development dependencies (optional)
+# pytest>=7.4.0
+# pytest-cov>=4.1.0
+# black>=23.7.0
+# flake8>=6.0.0
+# mypy>=1.4.0
+
+# Image processing (for product images)
+Pillow>=10.0.0
+
+# URL validation
+validators>=0.20.0
