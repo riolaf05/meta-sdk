@@ -92,6 +92,17 @@ data "aws_caller_identity" "current" {}
 # Lambda Function
 # ===================================================================
 
+# Lambda Layer per dipendenze Python
+resource "aws_lambda_layer_version" "python_dependencies" {
+  filename         = "${path.module}/lambda_layer.zip"
+  layer_name       = "${var.resource_prefix}-${var.project_name}-dependencies"
+  description      = "Python dependencies layer (requests, etc.)"
+  
+  compatible_runtimes = ["python3.9", "python3.10", "python3.11"]
+  
+  source_code_hash = filebase64sha256("${path.module}/lambda_layer.zip")
+}
+
 # Zip the Lambda function code
 data "archive_file" "lambda_zip" {
   type        = "zip"
@@ -132,6 +143,9 @@ resource "aws_lambda_function" "catalog_function" {
   runtime         = "python3.9"
   timeout         = 30
   memory_size     = 256
+
+  # Aggiungi il layer con le dipendenze
+  layers = [aws_lambda_layer_version.python_dependencies.arn]
 
   source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 

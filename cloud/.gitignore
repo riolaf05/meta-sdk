@@ -10,6 +10,8 @@ crash.log
 
 # Lambda Package
 lambda_function.zip
+lambda_layer.zip
+lambda-layer/
 
 # AWS
 .aws/
